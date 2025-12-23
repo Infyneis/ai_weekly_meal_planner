@@ -1,0 +1,178 @@
+// ╔═══════════════════════════════════════════════════════════════════════════╗
+// ║   🍽️  AI WEEKLY MEAL PLANNER - DATABASE SCHEMA                            ║
+// ║                                                                           ║
+// ║   This schema defines all database tables for the meal planning app:      ║
+// ║   • Recipes - Saved and AI-generated recipes                              ║
+// ║   • Ingredients - Recipe ingredients with quantities                      ║
+// ║   • NutritionInfo - Macros and nutritional data                           ║
+// ║   • MealPlan - Weekly meal plan containers                                ║
+// ║   • PlannedMeal - Individual meal slots with state                        ║
+// ╚═══════════════════════════════════════════════════════════════════════════╝
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ┌───────────────────────────────────────────────────────────────────────────┐
+// │ 📖 RECIPE                                                                 │
+// │ Core recipe data - title, description, times, source                      │
+// └───────────────────────────────────────────────────────────────────────────┘
+model Recipe {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  imageUrl    String?
+
+  // ⏱️ Timing
+  prepTime    Int?     // in minutes
+  cookTime    Int?     // in minutes
+  totalTime   Int?     // in minutes
+  servings    Int?
+
+  // 📝 Instructions (stored as JSON array of steps)
+  instructions String[]
+
+  // 🏷️ Categorization
+  cuisine     String?  // e.g., "Italian", "Mexican", "Asian"
+  mealType    String[] // e.g., ["breakfast", "lunch", "dinner", "snack"]
+  dietaryTags String[] // e.g., ["vegetarian", "vegan", "gluten-free"]
+  difficulty  String?  // "easy", "medium", "hard"
+
+  // 📍 Source tracking
+  source      String?  // "ai-generated", "instagram", "manual", "website"
+  sourceUrl   String?  // Original URL if imported
+
+  // 🕐 Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // 🔗 Relations
+  ingredients   Ingredient[]
+  nutritionInfo NutritionInfo?
+  plannedMeals  PlannedMeal[]
+
+  // 📚 Book status - is this saved to the recipe book?
+  inRecipeBook  Boolean @default(false)
+
+  @@index([title])
+  @@index([cuisine])
+  @@index([inRecipeBook])
+}
+
+// ┌───────────────────────────────────────────────────────────────────────────┐
+// │ 🥕 INGREDIENT                                                             │
+// │ Recipe ingredients with quantities and units                              │
+// └───────────────────────────────────────────────────────────────────────────┘
+model Ingredient {
+  id       String  @id @default(cuid())
+  name     String
+  quantity Float?
+  unit     String? // e.g., "cups", "tbsp", "g", "oz"
+  notes    String? // e.g., "diced", "room temperature"
+
+  // 🔗 Relations
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@index([recipeId])
+  @@index([name])
+}
+
+// ┌───────────────────────────────────────────────────────────────────────────┐
+// │ 📊 NUTRITION INFO                                                         │
+// │ Macros, calories, and micronutrients per serving                          │
+// └───────────────────────────────────────────────────────────────────────────┘
+model NutritionInfo {
+  id          String @id @default(cuid())
+
+  // 🔥 Main macros (per serving)
+  calories    Int?
+  protein     Float? // grams
+  carbs       Float? // grams
+  fat         Float? // grams
+  fiber       Float? // grams
+  sugar       Float? // grams
+
+  // 🧂 Micronutrients (optional)
+  sodium      Float? // mg
+  cholesterol Float? // mg
+
+  // 💡 AI estimation flag
+  isEstimated Boolean @default(true) // true if AI-estimated, false if from source
+
+  // 🔗 Relations
+  recipeId String @unique
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
+
+// ┌───────────────────────────────────────────────────────────────────────────┐
+// │ 📅 MEAL PLAN                                                              │
+// │ Weekly meal plan container - groups meals for a specific week             │
+// └───────────────────────────────────────────────────────────────────────────┘
+model MealPlan {
+  id        String   @id @default(cuid())
+
+  // 📆 Week identification
+  weekStart DateTime // Monday of the week
+
+  // 🕐 Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // 🔗 Relations
+  meals     PlannedMeal[]
+
+  @@unique([weekStart])
+  @@index([weekStart])
+}
+
+// ┌───────────────────────────────────────────────────────────────────────────┐
+// │ 🍴 PLANNED MEAL                                                           │
+// │ Individual meal slot - connects a recipe to a specific day and meal type  │
+// └───────────────────────────────────────────────────────────────────────────┘
+model PlannedMeal {
+  id         String   @id @default(cuid())
+
+  // 📆 When
+  date       DateTime
+  mealType   MealType // breakfast, lunch, dinner
+
+  // 🔄 State
+  status     MealStatus @default(SUGGESTED)
+
+  // 🔗 Relations
+  mealPlanId String
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+
+  recipeId   String
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  // 🕐 Timestamps
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([mealPlanId, date, mealType])
+  @@index([mealPlanId])
+  @@index([date])
+  @@index([status])
+}
+
+// ┌───────────────────────────────────────────────────────────────────────────┐
+// │ 🏷️ ENUMS                                                                  │
+// └───────────────────────────────────────────────────────────────────────────┘
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+}
+
+enum MealStatus {
+  SUGGESTED  // AI suggested, not yet validated
+  VALIDATED  // User approved this meal
+}
