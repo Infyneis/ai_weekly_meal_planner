@@ -285,32 +285,39 @@ export default function MealPlannerPage() {
     }
   };
 
-  // Save recipe to book
-  const handleSaveToBook = async (recipeId: string) => {
+  // Toggle recipe in book
+  const handleSaveToBook = async (recipeId: string, currentlySaved?: boolean) => {
+    const newSavedState = !currentlySaved;
+
     try {
       await fetch(`/api/recipes/${recipeId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ inRecipeBook: true }),
+        body: JSON.stringify({ inRecipeBook: newSavedState }),
       });
 
-      toast.success("Recipe saved to book!");
+      toast.success(newSavedState ? "Recipe saved to book!" : "Recipe removed from book");
 
-      // Update local state
+      // Update meal plan state
       setMealPlan((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           meals: prev.meals.map((m) =>
             m.recipe.id === recipeId
-              ? { ...m, recipe: { ...m.recipe, inRecipeBook: true } }
+              ? { ...m, recipe: { ...m.recipe, inRecipeBook: newSavedState } }
               : m
           ),
         };
       });
+
+      // Update selected recipe state for immediate UI feedback
+      setSelectedRecipe((prev) =>
+        prev ? { ...prev, inRecipeBook: newSavedState } : null
+      );
     } catch (error) {
-      console.error("Error saving recipe:", error);
-      toast.error("Failed to save recipe");
+      console.error("Error updating recipe:", error);
+      toast.error("Failed to update recipe");
     }
   };
 
@@ -398,7 +405,7 @@ export default function MealPlannerPage() {
           }
         }}
         recipe={selectedRecipe}
-        onSaveToBook={() => selectedRecipeId && handleSaveToBook(selectedRecipeId)}
+        onSaveToBook={() => selectedRecipeId && handleSaveToBook(selectedRecipeId, selectedRecipe?.inRecipeBook)}
         isSaved={selectedRecipe?.inRecipeBook}
       />
     </div>

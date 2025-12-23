@@ -153,6 +153,9 @@ export default function RecipesPage() {
             r.id === recipeId ? { ...r, inRecipeBook: true } : r
           )
         );
+        setSelectedRecipe((prev) =>
+          prev ? { ...prev, inRecipeBook: true } : null
+        );
         toast.success("Recipe saved to book");
       }
     } catch (error) {
