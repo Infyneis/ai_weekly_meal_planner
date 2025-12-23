@@ -26,6 +26,7 @@ interface PlannedMeal {
     prepTime?: number | null;
     cookTime?: number | null;
     imageUrl?: string | null;
+    inRecipeBook?: boolean;
     nutritionInfo?: {
       calories?: number | null;
       protein?: number | null;
@@ -38,7 +39,7 @@ interface WeekCalendarProps {
   onValidateMeal: (mealId: string) => void;
   onRetryMeal: (date: Date, mealType: MealType) => Promise<void>;
   onGenerateMeal: (date: Date, mealType: MealType) => Promise<void | string | null>;
-  onSaveToBook: (recipeId: string) => void;
+  onSaveToBook: (recipeId: string, currentlySaved?: boolean) => void;
   onViewRecipe: (recipeId: string) => void;
   onGenerateWeek: () => Promise<void>;
   isGeneratingWeek: boolean;
@@ -213,9 +214,10 @@ export function WeekCalendar({
                       mealType={mealType}
                       status={meal.status}
                       isLoading={isGenerating}
+                      isSaved={meal.recipe.inRecipeBook}
                       onValidate={() => onValidateMeal(meal.id)}
                       onRetry={() => handleRetryMeal(day, mealType)}
-                      onSaveToBook={() => onSaveToBook(meal.recipe.id)}
+                      onSaveToBook={() => onSaveToBook(meal.recipe.id, meal.recipe.inRecipeBook)}
                       onViewDetails={() => onViewRecipe(meal.recipe.id)}
                     />
                   );

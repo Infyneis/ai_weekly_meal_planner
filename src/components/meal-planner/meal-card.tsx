@@ -7,6 +7,7 @@ import {
   Clock,
   Flame,
   BookmarkPlus,
+  Bookmark,
   ChevronRight,
   Loader2,
 } from "lucide-react";
@@ -31,6 +32,7 @@ interface MealCardProps {
   mealType: MealType;
   status: MealStatus;
   isLoading?: boolean;
+  isSaved?: boolean;
   onValidate?: () => void;
   onRetry?: () => void;
   onSaveToBook?: () => void;
@@ -65,6 +67,7 @@ export function MealCard({
   mealType,
   status,
   isLoading = false,
+  isSaved = false,
   onValidate,
   onRetry,
   onSaveToBook,
@@ -203,8 +206,16 @@ export function MealCard({
               >
                 Unkeep
               </Button>
-              <Button size="sm" variant="ghost" onClick={onSaveToBook}>
-                <BookmarkPlus className="h-4 w-4" />
+              <Button
+                size="sm"
+                variant={isSaved ? "secondary" : "ghost"}
+                onClick={onSaveToBook}
+              >
+                {isSaved ? (
+                  <Bookmark className="h-4 w-4 fill-current" />
+                ) : (
+                  <BookmarkPlus className="h-4 w-4" />
+                )}
               </Button>
             </>
           )}
