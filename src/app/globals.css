@@ -1,26 +1,235 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
+
+/* 🍽️ AI Weekly Meal Planner - Cozy & Comfy Theme */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Custom cozy colors */
+  --color-cozy-orange: var(--cozy-orange);
+  --color-cozy-peach: var(--cozy-peach);
+  --color-cozy-cream: var(--cozy-cream);
+  --color-cozy-brown: var(--cozy-brown);
+  --color-cozy-green: var(--cozy-green);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  --radius: 0.75rem;
+
+  /* 🌅 Light Mode - Warm, Cozy Kitchen Vibes */
+  --background: oklch(0.98 0.01 80);         /* Warm cream background */
+  --foreground: oklch(0.25 0.03 50);         /* Warm dark brown text */
+  --card: oklch(0.995 0.005 80);             /* Slightly brighter cream for cards */
+  --card-foreground: oklch(0.25 0.03 50);    /* Warm dark brown */
+  --popover: oklch(0.995 0.005 80);
+  --popover-foreground: oklch(0.25 0.03 50);
+
+  /* Primary - Warm Orange (like autumn leaves) */
+  --primary: oklch(0.65 0.18 50);            /* Warm terracotta/burnt orange */
+  --primary-foreground: oklch(0.99 0.01 80); /* Cream white */
+
+  /* Secondary - Soft Sage Green */
+  --secondary: oklch(0.92 0.03 140);         /* Soft sage */
+  --secondary-foreground: oklch(0.35 0.05 140); /* Deep sage */
+
+  /* Muted - Warm Taupe */
+  --muted: oklch(0.93 0.02 70);              /* Warm taupe */
+  --muted-foreground: oklch(0.50 0.03 50);   /* Medium brown */
+
+  /* Accent - Peachy Pink */
+  --accent: oklch(0.90 0.06 50);             /* Soft peach */
+  --accent-foreground: oklch(0.35 0.08 40);  /* Deep coral */
+
+  --destructive: oklch(0.60 0.20 25);        /* Warm red */
+  --border: oklch(0.88 0.02 70);             /* Warm beige border */
+  --input: oklch(0.92 0.02 70);              /* Warm input background */
+  --ring: oklch(0.65 0.18 50);               /* Primary orange ring */
+
+  /* Chart Colors - Food-inspired palette */
+  --chart-1: oklch(0.65 0.18 50);            /* Terracotta */
+  --chart-2: oklch(0.70 0.15 140);           /* Sage green */
+  --chart-3: oklch(0.75 0.12 80);            /* Golden wheat */
+  --chart-4: oklch(0.68 0.14 25);            /* Tomato red */
+  --chart-5: oklch(0.72 0.10 200);           /* Soft blue (water) */
+
+  /* Sidebar */
+  --sidebar: oklch(0.96 0.015 70);
+  --sidebar-foreground: oklch(0.25 0.03 50);
+  --sidebar-primary: oklch(0.65 0.18 50);
+  --sidebar-primary-foreground: oklch(0.99 0.01 80);
+  --sidebar-accent: oklch(0.92 0.04 50);
+  --sidebar-accent-foreground: oklch(0.35 0.05 50);
+  --sidebar-border: oklch(0.88 0.02 70);
+  --sidebar-ring: oklch(0.65 0.18 50);
+
+  /* Custom cozy colors */
+  --cozy-orange: oklch(0.65 0.18 50);
+  --cozy-peach: oklch(0.85 0.08 50);
+  --cozy-cream: oklch(0.97 0.01 80);
+  --cozy-brown: oklch(0.40 0.06 50);
+  --cozy-green: oklch(0.70 0.12 140);
+}
+
+.dark {
+  /* 🌙 Dark Mode - Cozy Evening Kitchen */
+  --background: oklch(0.18 0.02 50);         /* Warm dark brown */
+  --foreground: oklch(0.92 0.02 70);         /* Warm cream text */
+  --card: oklch(0.22 0.025 50);              /* Slightly lighter brown for cards */
+  --card-foreground: oklch(0.92 0.02 70);
+  --popover: oklch(0.22 0.025 50);
+  --popover-foreground: oklch(0.92 0.02 70);
+
+  /* Primary - Warm Orange (glowing) */
+  --primary: oklch(0.72 0.16 50);            /* Brighter orange for dark mode */
+  --primary-foreground: oklch(0.15 0.02 50); /* Dark brown */
+
+  /* Secondary - Muted Sage */
+  --secondary: oklch(0.28 0.03 140);         /* Dark sage */
+  --secondary-foreground: oklch(0.85 0.08 140); /* Light sage */
+
+  /* Muted - Warm Dark Taupe */
+  --muted: oklch(0.25 0.02 50);
+  --muted-foreground: oklch(0.65 0.03 70);
+
+  /* Accent - Deep Peach */
+  --accent: oklch(0.30 0.04 50);
+  --accent-foreground: oklch(0.88 0.10 50);
+
+  --destructive: oklch(0.65 0.20 25);
+  --border: oklch(0.30 0.02 50);
+  --input: oklch(0.25 0.02 50);
+  --ring: oklch(0.72 0.16 50);
+
+  /* Chart Colors - Darker food palette */
+  --chart-1: oklch(0.72 0.16 50);
+  --chart-2: oklch(0.65 0.12 140);
+  --chart-3: oklch(0.70 0.10 80);
+  --chart-4: oklch(0.62 0.14 25);
+  --chart-5: oklch(0.65 0.08 200);
+
+  /* Sidebar */
+  --sidebar: oklch(0.20 0.02 50);
+  --sidebar-foreground: oklch(0.92 0.02 70);
+  --sidebar-primary: oklch(0.72 0.16 50);
+  --sidebar-primary-foreground: oklch(0.15 0.02 50);
+  --sidebar-accent: oklch(0.28 0.03 50);
+  --sidebar-accent-foreground: oklch(0.88 0.06 50);
+  --sidebar-border: oklch(0.30 0.02 50);
+  --sidebar-ring: oklch(0.72 0.16 50);
+
+  /* Custom cozy colors - dark mode */
+  --cozy-orange: oklch(0.72 0.16 50);
+  --cozy-peach: oklch(0.55 0.10 50);
+  --cozy-cream: oklch(0.92 0.02 70);
+  --cozy-brown: oklch(0.55 0.04 50);
+  --cozy-green: oklch(0.60 0.10 140);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Custom scrollbar for cozy feel */
+@layer utilities {
+  .scrollbar-cozy::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-cozy::-webkit-scrollbar-track {
+    background: var(--muted);
+    border-radius: 4px;
+  }
+
+  .scrollbar-cozy::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+  }
+
+  .scrollbar-cozy::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+}
+
+/* Cozy card hover effect */
+.card-cozy {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-cozy:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgb(0 0 0 / 0.1), 0 4px 10px -6px rgb(0 0 0 / 0.05);
+}
+
+/* Meal card gradient backgrounds */
+.meal-breakfast {
+  background: linear-gradient(135deg, oklch(0.95 0.04 80) 0%, oklch(0.92 0.06 50) 100%);
+}
+
+.meal-lunch {
+  background: linear-gradient(135deg, oklch(0.95 0.04 140) 0%, oklch(0.92 0.06 120) 100%);
+}
+
+.meal-dinner {
+  background: linear-gradient(135deg, oklch(0.95 0.04 50) 0%, oklch(0.90 0.08 40) 100%);
+}
+
+.dark .meal-breakfast {
+  background: linear-gradient(135deg, oklch(0.25 0.03 80) 0%, oklch(0.28 0.04 50) 100%);
+}
+
+.dark .meal-lunch {
+  background: linear-gradient(135deg, oklch(0.25 0.03 140) 0%, oklch(0.28 0.04 120) 100%);
+}
+
+.dark .meal-dinner {
+  background: linear-gradient(135deg, oklch(0.25 0.03 50) 0%, oklch(0.28 0.05 40) 100%);
 }
