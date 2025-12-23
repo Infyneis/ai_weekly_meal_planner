@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Globe, ChefHat, Loader2, Plus, ExternalLink } from "lucide-react";
+import { Search, Globe, ChefHat, Loader2, Plus, ExternalLink, Check } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -42,6 +42,7 @@ export function RecipeSearch({ open, onOpenChange, onImport }: RecipeSearchProps
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [importing, setImporting] = useState<string | null>(null);
+  const [importedIds, setImportedIds] = useState<Set<string>>(new Set());
   const [cuisines, setCuisines] = useState<string[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedCuisine, setSelectedCuisine] = useState<string>("");
@@ -108,8 +109,8 @@ export function RecipeSearch({ open, onOpenChange, onImport }: RecipeSearchProps
     setImporting(recipeId);
     try {
       await onImport(recipeId);
-      // Remove from results after importing
-      setResults((prev) => prev.filter((r) => r.externalId !== recipeId));
+      // Mark as imported instead of removing
+      setImportedIds((prev) => new Set(prev).add(recipeId));
     } catch (error) {
       console.error("Import error:", error);
     } finally {
@@ -255,11 +256,17 @@ export function RecipeSearch({ open, onOpenChange, onImport }: RecipeSearchProps
                   <div className="flex flex-col gap-2 flex-shrink-0">
                     <Button
                       size="sm"
+                      variant={importedIds.has(recipe.externalId) ? "secondary" : "default"}
                       onClick={() => handleImport(recipe.externalId)}
-                      disabled={importing === recipe.externalId}
+                      disabled={importing === recipe.externalId || importedIds.has(recipe.externalId)}
                     >
                       {importing === recipe.externalId ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : importedIds.has(recipe.externalId) ? (
+                        <>
+                          <Check className="h-4 w-4 mr-1" />
+                          Saved
+                        </>
                       ) : (
                         <>
                           <Plus className="h-4 w-4 mr-1" />
