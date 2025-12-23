@@ -1,0 +1,45 @@
+# ╔═══════════════════════════════════════════════════════════════════════════╗
+# ║                                                                           ║
+# ║   🍽️  AI WEEKLY MEAL PLANNER - DOCKER COMPOSE                             ║
+# ║                                                                           ║
+# ║   This file defines the PostgreSQL database container.                    ║
+# ║   The Next.js app and Ollama run locally for better performance.          ║
+# ║                                                                           ║
+# ║   Services:                                                               ║
+# ║   • 🐘 PostgreSQL - Persistent database for recipes & meal plans          ║
+# ║                                                                           ║
+# ║   Usage: docker compose up -d                                             ║
+# ║                                                                           ║
+# ╚═══════════════════════════════════════════════════════════════════════════╝
+
+services:
+  # ┌───────────────────────────────────────────────────────────────────────────┐
+  # │ 🐘 POSTGRESQL DATABASE                                                    │
+  # │ Stores recipes, meal plans, nutritional info, and user preferences        │
+  # └───────────────────────────────────────────────────────────────────────────┘
+  postgres:
+    image: postgres:16-alpine
+    container_name: meal-planner-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mealplanner
+      POSTGRES_PASSWORD: mealplanner_secret
+      POSTGRES_DB: mealplanner
+    ports:
+      - "5432:5432"
+    volumes:
+      # 💾 Persist database data between container restarts
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mealplanner -d mealplanner"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ┌───────────────────────────────────────────────────────────────────────────┐
+# │ 💾 NAMED VOLUMES                                                          │
+# │ Persistent storage for database data                                      │
+# └───────────────────────────────────────────────────────────────────────────┘
+volumes:
+  postgres_data:
+    name: meal-planner-postgres-data
