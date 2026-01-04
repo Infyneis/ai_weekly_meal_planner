@@ -3,7 +3,7 @@
 </p>
 
 <h1 align="center">🍽️ AI Weekly Meal Planner</h1>
-<h3 align="center">Plan your meals with ease using real recipes from the web <code>#11/365 - Year Coding Challenge</code></h3>
+<h3 align="center">Plan your meals with ease using real recipes from the web</h3>
 
 <p align="center">
   <em>Beautiful weekly calendar, recipe book, nutritional insights, and a cozy warm theme</em>
@@ -35,7 +35,6 @@
 A modern **meal planning application** that fetches real recipes from TheMealDB API. Plan your weekly meals with a beautiful calendar view, save recipes to your personal cookbook, and track nutritional information. Features a cozy, warm-themed UI with Shadcn components.
 
 <p align="center">
-  <img src="https://img.shields.io/badge/🚀_Year_Coding_Challenge-Project_%2311-E07A5F?style=for-the-badge" alt="Year Coding Challenge" />
   <img src="https://img.shields.io/badge/📅_Completed-December_23,_2024-F2CC8F?style=for-the-badge" alt="Completed" />
   <img src="https://img.shields.io/badge/🎨_Theme-Cozy_Warm-D4A373?style=for-the-badge" alt="Theme" />
 </p>
